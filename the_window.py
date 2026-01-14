@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from the_logic import Quiz_manager
+from question_model import question
 import html
 
 
@@ -13,7 +14,8 @@ class GUI:
         self.window.config(padx=20,pady=10,bg="#0B4C6E")
         
         #the worker(object of class Quiz_manager) who can use all the function of Quiz_manger
-        self.worker=Quiz_manager()
+        self.worker = Quiz_manager()
+        
         #the widgets(buttons, labels, ans box etc all cretated on a seperate function, but part of window thus ran here )
         self.create_widgets()
         self.window.mainloop()
@@ -58,17 +60,18 @@ class GUI:
         self.btn_ans.grid(row=11,column=0,padx=5,pady=5)
 
     def print_ques(self):
-        self.worker.fetch_data()
-        Ques= self.worker.Get_ques()
-        self.worker.Get_cor_ans()
-        self.worker.Get_in_ans()
-        all_ans = self.worker.get_all_ans()
-        self.ques_label.config(text=Ques)
+        self.q = self.worker.next_ques()
+        all_ans= self.q.choices
+        ques = self.q.ques
+        
+        self.ques_label.config(text=ques)
         
         self.button_1.config(text=f"{all_ans[0]}")
         self.button_2.config(text=f"{all_ans[1]}")
         self.button_3.config(text=f"{all_ans[2]}")
         self.button_4.config(text=f"{all_ans[3]}")
+
+        self.ans_label.config(text="")
 
     
 
@@ -88,7 +91,8 @@ class GUI:
         elif a == 4:
             text1 = self.button_4.cget("text")
         
-        cor_ans = self.worker.Get_cor_ans()
+        cor_ans = self.q.cor_ans
+        
 
         if text1 == cor_ans:
             self.ans_label.config(text="its Correct")

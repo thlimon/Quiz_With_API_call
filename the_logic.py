@@ -1,51 +1,48 @@
 import requests
 import html
-
+from question_model import question
 import random
 
 
 class Quiz_manager():
     def __init__(self):
-       self.ques_data = None
-       pass
-     
- 
-    def fetch_data(self):
-       url = "https://opentdb.com/api.php?amount=1&type=multiple"
+       
+       url = "https://opentdb.com/api.php?amount=10&type=multiple"
        response = requests.get(url)
       
        if response.status_code == 200:
             data = response.json() 
-            self.ques_data = data['results'][0] 
-            return True
+
        else:
            quit()
-    def Get_ques(self):
        
-        ques = html.unescape(self.ques_data['question'])
-        return ques
-    
-    def Get_cor_ans(self):
+       self.question_bank = [] 
+       
+       for item in data['results']:
         
-        self.cor_ans = html.unescape(self.ques_data['correct_answer'])
-        return self.cor_ans
-    
-    def Get_in_ans(self):
-       self.incorrects = [html.unescape(ans) for ans in self.ques_data['incorrect_answers']]
-       
+        ques_data = item
            
-       return self.incorrects
-    
-    def get_all_ans(self):
+        ques = html.unescape(ques_data['question'])
+        cor_ans = html.unescape(ques_data['correct_answer'])
+        inc_ans = html.unescape(ques_data['incorrect_answers'])
 
-        self.cor_ans = html.unescape(self.ques_data['correct_answer'])
+        questions = question(ques,cor_ans,inc_ans)
+        self.question_bank.append(questions)
+        self.ques_num= 0
+       pass
+    def next_ques(self):
+       current_q = self.question_bank[self.ques_num]
 
-        self.incorrects = self.incorrects = [html.unescape(ans) for ans in self.ques_data['incorrect_answers']]
+       self.ques_num +=1
+
+       return current_q
+          
+       
+ 
+
         
-        self.all_ans = [self.cor_ans] + self.incorrects
-        random.shuffle(self.all_ans) 
-        
-        return self.all_ans          
+
+
        
        
 
